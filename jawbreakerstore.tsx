@@ -49,6 +49,17 @@ const updateGame = {
       const index = rowColumnToId(n.row, n.column)
       updateGame.highlightPlop(index)
     }
+  },
+  removePlop(plopIndex: number) {
+    const temp = store.plops.slice()
+    temp.splice(plopIndex, 1)
+    setStore("plops", temp)
+  },
+  removePlops(cache=[] as Neighbor[]) {
+    for (const n of cache){
+      const index = rowColumnToId(n.row, n.column)
+      updateGame.removePlop(index)
+    }
   }
 }
 createMemo(() => {
@@ -110,7 +121,7 @@ function App() {
   return (
     <div>
       <div>
-        Plops: {store.count}
+        Plops: {store.plops.length}
         <br />
         Columns: {store.columns}
         <br />
@@ -139,8 +150,15 @@ function Plop(props: { color: string; isHighlighted: boolean, size: number, id:n
     ></p>
   );
   function clickPlop() {
-    const { row, column } = idToRowColumn(props.id)
-    updateGame.highlightPlops(getNeighbors(row, column))
+    if (props.isHighlighted) {
+      const { row, column } = idToRowColumn(props.id)
+      updateGame.removePlops(getNeighbors(row, column))
+    }
+    else {
+      const { row, column } = idToRowColumn(props.id)
+      updateGame.highlightPlops(getNeighbors(row, column))
+    }
+    
   }
 }
 
